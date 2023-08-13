@@ -3,8 +3,6 @@ import requests
 import csv
 import os
 
-scriptDir = os.path.dirname(os.path.abspath(__file__))
-
 username = input("What is the username of the person you are trying to scrape? ")
 
 url = "https://github.com/" + username + "?tab=repositories"
@@ -15,12 +13,13 @@ soup = bs(html_content, 'html.parser')
 
 
 repoDict = []
-
+#Scrapes the page for the repo names
 for i in soup.find_all('a', itemprop='name codeRepository'):
     repoName = i.text.strip()
     repoLink = "https://github.com/" + username + "/" + repoName
     repoDict.append({'Repo Name': repoName, 'Repo Link': repoLink})
-
+    
+#Checks for data
 if len(repoDict) > 0:
     print("Data Found!")
 else:
@@ -29,6 +28,8 @@ else:
 
 response.close()
 
+#Grabs the dirname directory, otherwise the csv will be made in the parent folder
+scriptDir = os.path.dirname(os.path.abspath(__file__))
 csvName = os.path.join(scriptDir, 'reposFor' + username + '.csv')
 
 with open(csvName, 'w', newline='', encoding='utf-8') as csvFile:
